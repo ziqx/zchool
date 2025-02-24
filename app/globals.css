@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.fullcenter {
+  @apply flex flex-col items-center justify-center;
+}
+
+.button {
+  @apply bg-darkblue hover:bg-zinc-900 text-white  rounded-lg duration-300 hover:shadow-xl;
+}

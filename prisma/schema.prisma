@@ -1,0 +1,189 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db.db"
+}
+
+model config {
+  id           Int    @id @default(autoincrement())
+  config_key   String
+  config_value String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model user {
+  id      String  @id @default(cuid())
+  name    String?
+  ziqx_id String
+  role    String  @default("user")
+
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  rights     user_right[]
+}
+
+model institute {
+  id                 String  @id @default(cuid())
+  name               String
+  place              String?
+  address            String?
+  open_for_admission Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user_right        user_right[]
+  student           student[]
+  academic_year     academic_year[]
+  grade             grade[]
+  teacher           teacher[]
+  teacher_institute teacher_institute[]
+}
+
+model right {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+  delete_status Boolean      @default(false)
+  users         user_right[]
+}
+
+model user_right {
+  id        Int       @id @default(autoincrement())
+  user      user      @relation(fields: [userId], references: [id])
+  right     right     @relation(fields: [rightId], references: [id])
+  institute institute @relation(fields: [instituteId], references: [id])
+
+  created_at DateTime @default(now())
+
+  userId      String
+  rightId     Int
+  instituteId String
+}
+
+model academic_year {
+  id         Int       @id @default(autoincrement())
+  year       String
+  institute  institute @relation(fields: [instituteId], references: [id])
+  created_at DateTime  @default(now())
+
+  instituteId String
+  grade       grade[]
+}
+
+model student {
+  id          String    @id @default(cuid())
+  institute   institute @relation(fields: [instituteId], references: [id])
+  name        String?
+  dob         String?
+  father_name String?
+  mother_name String?
+  address1    String?
+  address2    String?
+  contact1    String?
+  contact2    String?
+  whatsapp    String?
+  email       String?
+  join_date   String?
+
+  instituteId String
+}
+
+model grade {
+  id            Int           @id @default(autoincrement())
+  institute     institute     @relation(fields: [instituteId], references: [id])
+  academic_year academic_year @relation(fields: [academic_yearId], references: [id])
+  name          String
+  section       String?
+  created_at    DateTime      @default(now())
+
+  subject         subject[]
+  instituteId     String
+  academic_yearId Int
+}
+
+model subject {
+  id         Int      @id @default(autoincrement())
+  name       String
+  code       String?
+  grade      grade    @relation(fields: [gradeId], references: [id])
+  created_at DateTime @default(now())
+
+  gradeId Int
+}
+
+model teacher {
+  id        String  @id @default(cuid())
+  name      String?
+  dob       String?
+  address1  String?
+  address2  String?
+  contact1  String?
+  contact2  String?
+  whatsapp  String?
+  email     String?
+  join_date String?
+
+  created_at        DateTime            @default(now())
+  instituteId       String
+  institute         institute           @relation(fields: [instituteId], references: [id])
+  teacher_institute teacher_institute[]
+}
+
+model teacher_institute {
+  id        Int       @id @default(autoincrement())
+  teacher   teacher   @relation(fields: [teacherId], references: [id])
+  institute institute @relation(fields: [instituteId], references: [id])
+
+  created_at  DateTime @default(now())
+  teacherId   String
+  instituteId String
+}
+
+model admission_form {
+  id          Int     @id @default(autoincrement())
+  title       String?
+  description String?
+  is_open     Boolean @default(false)
+  form_items  String?
+
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  delete_status        Boolean               @default(false)
+  admission_form_items admission_form_item[]
+}
+
+model admission_form_item {
+  id             Int            @id @default(autoincrement())
+  admission_form admission_form @relation(fields: [admission_formId], references: [id])
+  label          String?
+  type           String?        @default("input")
+  initial_value  String?
+
+  admission_formId Int
+}
+
+model admission_application {
+  id                 Int     @id @default(autoincrement())
+  phone              String?
+  email              String?
+  dob                String?
+  password           String?
+  application_values String? // JSON Value of application form
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
