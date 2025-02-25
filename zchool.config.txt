@@ -3,9 +3,18 @@
 // !!! DO NOT DIRECTY MODIFY OR DELETE THIS FILE
 
 const ZCHOOL_DEFAULTS = {
+  SITE:{
+    DOMAIN:"https://zchool.in",
+    DRIVE:"https://drive.zchool.in",
+  },
+  META: {
+    TITLE: "Zchool",
+    DESCRIPTION: "School Management System",
+    THUMB: "thumb.png",
+  },
   THEME: {
-    PRIMARY_COLOR: "#3f51b5",
-    SECONDARY_COLOR: "#f50057",
+    PRIMARY_COLOR: "#147070",
+    SECONDARY_COLOR: "#147070",
     ACCENT_COLOR: "#ffeb3b",
   },
 };
